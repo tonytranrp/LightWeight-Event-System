@@ -26,4 +26,35 @@ endif()
 # Set output directory
 set_target_properties(EventCore_Example PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
+
+
+
+# RAII Pattern Comparison Example
+add_executable(EventCore_RAIIExample RAIIPatternExample.cpp)
+
+target_link_libraries(EventCore_RAIIExample 
+    PRIVATE 
+        EventCore
+)
+
+# Ensure C++20 standard
+target_compile_features(EventCore_RAIIExample PRIVATE cxx_std_20)
+
+# Add example-specific compiler flags
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(EventCore_RAIIExample PRIVATE -Wall -Wextra)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(EventCore_RAIIExample PRIVATE 
+        /W4  # High warning level
+        # Suppress warnings from external dependencies
+        /wd26495  # Uninitialized member variable (from moodycamel)
+        /wd26819  # Unannotated fallthrough (from robin_hood)
+        /wd6305   # Potential sizeof/countof mismatch (from robin_hood)
+    )
+endif()
+
+# Set output directory
+set_target_properties(EventCore_RAIIExample PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 ) 
